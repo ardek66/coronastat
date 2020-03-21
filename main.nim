@@ -1,5 +1,5 @@
-import json, httpclient, times, strformat
-import options
+import json, httpclient, times, strformat, strutils, sequtils, unidecode
+import options, table
 
 Parse()
 
@@ -12,7 +12,11 @@ var
 if country == "":
   requestURL &= "all"
 else:
-  requestURL &= "countries/" & country
+  if country == "all":
+    requestURL &= "countries"
+  else:
+    requestURL &= "countries/" & country
+
   countryMode = true
 
 let data = client.getContent(requestURL)
@@ -20,11 +24,16 @@ let data = client.getContent(requestURL)
 node = parseJson(data)
 
 var
-  cases      = node["cases"].getInt()
-  deaths     = node["deaths"].getInt()
-  recovered  = node["recovered"].getInt()
+  cases: int
+  deaths: int
+  recovered: int
   lastUpdated: string
   output: string
+
+if country != "all":
+  cases     = node["cases"].getInt()
+  deaths    = node["deaths"].getInt()
+  recovered = node["recovered"].getInt()
 
 if not countryMode:
   let unixStart = parse("1970-01-01", "yyyy-MM-dd")
@@ -34,13 +43,30 @@ if not countryMode:
 
   output = fmt"cases: {cases} deaths: {deaths} recovered: {recovered} last updated: {lastUpdated}"
 else:
-  if showNew:
-    var
-      newCases  = node["todayCases"]
-      newDeaths = node["todayDeaths"]
+  if country != "all":
+    if showNew:
+      var
+        newCases  = node["todayCases"]
+        newDeaths = node["todayDeaths"]
 
-    output = fmt"new cases: {newCases} ; new deaths: {newDeaths}"
+      output = fmt"new cases: {newCases} ; new deaths: {newDeaths}"
+    else:
+      output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered}"
   else:
-    output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered}"
+    var 
+      countries: seq[seq[string]]
+      i = 0
+
+    for item in node.items:
+      var row: seq[string]
+      row.add(intToStr(i + 1))
+      row.add(unidecode(item["country"].getStr()))
+      row.add(intToStr(item["cases"].getInt()))
+      row.add(intToStr(item["deaths"].getInt()))
+      row.add(intToStr(item["recovered"].getInt()))
+      countries.add(row)
+      inc i
+
+    PrintTable(@["", "country", "cases", "deaths", "recovered"], countries)
 
 echo output
