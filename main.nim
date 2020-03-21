@@ -34,6 +34,13 @@ if not countryMode:
 
   output = fmt"cases: {cases} deaths: {deaths} recovered: {recovered} last updated: {lastUpdated}"
 else:
-  output = fmt"cases: {cases} deaths: {deaths} recovered: {recovered}"
+  if showNew:
+    var
+      newCases  = node["todayCases"]
+      newDeaths = node["todayDeaths"]
+
+    output = fmt"new cases: {newCases} ; new deaths: {newDeaths}"
+  else:
+    output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered}"
 
 echo output
