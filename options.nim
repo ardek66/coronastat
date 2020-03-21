@@ -14,6 +14,7 @@ var
   options*: seq[Option]
   country* = ""
   showNew* = false
+  showLastUpdate* = false
 
 proc GetOptionLength(option: Option): int =
   return (option.short & ", " & option.long).len()
@@ -50,10 +51,11 @@ proc HelpCallback(val: string) =
   quit()
 
 proc Parse*() =
-  options.add(Option(long: "version", short: "v", description: "show version info", callback: VersionCallback))
-  options.add(Option(long: "help", short: "h", description: "show help", callback: HelpCallback))
-  options.add(Option(long: "country", short: "c", description: "set country", callback: (proc (val: string) = country = val)))
-  options.add(Option(long: "new", short: "n", description: "only shows new data(only works if a country is specified)", callback: (proc (val: string) = showNew = true)))
+  options.add Option(long: "version", short: "v", description: "shows version info", callback: VersionCallback)
+  options.add Option(long: "help", short: "h", description: "shows help", callback: HelpCallback)
+  options.add Option(long: "country", short: "c", description: "set country(if set to all -> shows information about all countries)", callback: (proc (val: string) = country = val))
+  options.add Option(long: "new", short: "n", description: "shows new data(only works if a country is specified)", callback: (proc (val: string) = showNew = true))
+  options.add Option(long: "lastupdate", short: "l", description: "shows when was the last update(only works if a country is not specified)", callback: (proc (val: string) = showLastUpdate = true))
 
   let args = commandLineParams().join(" ")
 

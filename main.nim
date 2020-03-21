@@ -41,7 +41,10 @@ if not countryMode:
 
   lastUpdated = $(unixStart + now)
 
-  output = fmt"cases: {cases} deaths: {deaths} recovered: {recovered} last updated: {lastUpdated}"
+  if showLastUpdate:
+    output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered} ; last updated: {lastUpdated}"
+  else:
+    output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered}"
 else:
   if country != "all":
     if showNew:
