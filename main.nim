@@ -49,7 +49,7 @@ else:
         newCases  = node["todayCases"]
         newDeaths = node["todayDeaths"]
 
-      output = fmt"new cases: {newCases} ; new deaths: {newDeaths}"
+      output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered} ; new cases: {newCases} ; new deaths: {newDeaths}"
     else:
       output = fmt"cases: {cases} ; deaths: {deaths} ; recovered: {recovered}"
   else:
@@ -59,14 +59,25 @@ else:
 
     for item in node.items:
       var row: seq[string]
-      row.add(intToStr(i + 1))
-      row.add(unidecode(item["country"].getStr()))
-      row.add(intToStr(item["cases"].getInt()))
-      row.add(intToStr(item["deaths"].getInt()))
-      row.add(intToStr(item["recovered"].getInt()))
-      countries.add(row)
+      row.add intToStr(i + 1)
+      row.add unidecode(item["country"].getStr())
+      row.add intToStr(item["cases"].getInt())
+      row.add intToStr(item["deaths"].getInt())
+      row.add intToStr(item["recovered"].getInt())
+
+      if showNew:
+        row.add intToStr(item["todayCases"].getInt())
+        row.add intToStr(item["todayDeaths"].getInt())
+
+      countries.add row
       inc i
 
-    PrintTable(@["", "country", "cases", "deaths", "recovered"], countries)
+    var headers = @["", "country", "cases", "deaths", "recovered"]
+
+    if showNew:
+      headers.add "new cases"
+      headers.add "new deaths"
+
+    PrintTable(headers, countries)
 
 echo output
