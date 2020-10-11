@@ -1,4 +1,4 @@
-import json, httpclient, times, strformat, strutils, sequtils, unidecode
+import json, httpclient, times, strformat, strutils, unidecode
 import options, table
 
 Parse()
