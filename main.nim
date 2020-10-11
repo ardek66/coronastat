@@ -4,7 +4,7 @@ import options, table
 Parse()
 
 var 
-  requestURL = "https://corona.lmao.ninja/"
+  requestURL = "https://disease.sh/v3/covid-19/"
   client = newHttpClient()
   node: JsonNode
   countryMode = false
